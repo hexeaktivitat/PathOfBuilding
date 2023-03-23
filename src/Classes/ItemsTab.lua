@@ -2036,6 +2036,28 @@ function ItemsTabClass:EnchantDisplayItem(enchantSlot)
 	end)
 	controls.enchantmentLabel = new("LabelControl", {"TOPRIGHT",nil,"TOPLEFT"}, 95, 70, 0, 16, "^7Enchantment:")
 	controls.enchantment = new("DropDownControl", {"TOPLEFT",nil,"TOPLEFT"}, 100, 70, 440, 18, enchantmentList)
+
+	controls.enchantment.tooltipFunc = function(tooltip)
+		tooltip:Clear()
+
+		local slotName = self.displayItem:GetPrimarySlot()
+		local newItem = new("Item", self.displayItem:BuildRaw())
+
+		for _, subMod in ipairs(controls.enchantment) do
+			t_insert(newItem.enchantModLines, {line = subMod, modTags = controls.enchantment.modTags, [controls.enchantment.type] = true},{})
+		end
+
+		newItem:BuildAndParseRaw()
+
+		local calcFunc = self.build.calcsTab:GetMiscCalculator()
+		local storedGlobalCacheDPSView = GlobalCache.useFullDPS
+		GlobalCache.useFullDPS = GlobalCache.numActiveSkillInFullDPS > 0
+		local outputBase = calcFunc({repSlotName = slotName, repItem = self.displayItem }, {})
+		local outputNew = calcFunc({repSlotName = slotName, repItem = newItem}, {})
+		GlobalCache.useFullDPS = storedGlobalCacheDPSView
+		self.build:AddStatComparesToTooltip(tooltip, outputBase, outputNew, "\nAdding this enchantment will give: ")
+	end
+
 	controls.save = new("ButtonControl", nil, -45, 100, 80, 20, "Enchant", function()
 		self:SetDisplayItem(enchantItem())
 		main:ClosePopup()
