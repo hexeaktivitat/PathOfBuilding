@@ -2040,15 +2040,11 @@ function ItemsTabClass:EnchantDisplayItem(enchantSlot)
 	controls.enchantment.tooltipFunc = function(tooltip, mode, index, value)
 		tooltip:Clear()
 
-		tooltip:AddSeparator()
-
 		tooltip:AddLine(16, "^7Hello from tooltip land")
 
-		local tempEnchant = enchantItem()
+		tooltip:AddSeparator()
 
-		self:AddModComparisonTooltip(tooltip, tempEnchant)
-
-		
+		local newItem = new("Item", self.displayItem:BuildRaw())
 
 		-- local slotName = self.displayItem:GetPrimarySlot()
 		-- local newItem = new("Item", self.displayItem:BuildRaw())
